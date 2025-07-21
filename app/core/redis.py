@@ -15,6 +15,11 @@ redis_pool = redis.ConnectionPool.from_url(
 redis_client = redis.Redis(connection_pool=redis_pool)
 
 
+def get_redis_client():
+    """Get Redis client instance"""
+    return redis_client
+
+
 class RedisService:
     """Service for Redis operations"""
     
