@@ -10,7 +10,8 @@ RUN apt-get update && apt-get install -y \
 
 # Copy dependency files
 COPY pyproject.toml ./
-COPY README.md ./
+# Copy README.md if it exists (Railway build context issues workaround)
+COPY README.md* ./
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -e .
