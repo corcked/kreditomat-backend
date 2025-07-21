@@ -4,7 +4,7 @@ from decimal import Decimal
 from pydantic import BaseModel, Field, field_validator
 
 from app.models.application import ApplicationStatus
-from app.models.personal_data import PDNRiskLevel
+from app.services.pdn import PDNRiskLevel
 
 
 class LoanCalculatorRequest(BaseModel):
