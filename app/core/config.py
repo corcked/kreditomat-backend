@@ -58,6 +58,10 @@ class Settings(BaseSettings):
     # Session
     SESSION_TTL_SECONDS: int = Field(default=86400)  # 24 hours
     
+    # Detection
+    ENABLE_IP_GEOLOCATION: bool = Field(default=False)
+    RESTRICT_TO_UZBEKISTAN: bool = Field(default=True)
+    
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
