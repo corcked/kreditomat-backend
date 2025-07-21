@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from app.core.config import get_settings
 from app.core.redis import RedisService
 from app.db.session import get_db
-from app.models import User
+from app.models.user import User
 
 settings = get_settings()
 security = HTTPBearer()
@@ -77,7 +77,7 @@ def decode_access_token(token: str) -> Dict[str, Any]:
         )
 
 
-async def get_current_user_from_token(
+async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
     db: Session = Depends(get_db)
 ) -> User:
@@ -154,7 +154,7 @@ async def get_current_user_optional(
         return None
         
     try:
-        return await get_current_user_from_token(credentials, db)
+        return await get_current_user(credentials, db)
     except HTTPException:
         return None
 
