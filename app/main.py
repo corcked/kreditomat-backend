@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 import uvicorn
 
 from app.core.config import get_settings
+from app.api.v1 import auth
 
 settings = get_settings()
 
@@ -51,6 +52,10 @@ def health_check():
         "status": "healthy",
         "environment": settings.ENVIRONMENT
     }
+
+
+# Include routers
+app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
 
 
 if __name__ == "__main__":
