@@ -8,19 +8,20 @@ RUN apt-get update && apt-get install -y \
     postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy dependency files
+# Copy dependency files first
 COPY pyproject.toml ./
-# Copy README.md if it exists (Railway build context issues workaround)
-COPY README.md* ./
+COPY requirements.txt ./
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -e .
+# Install Python dependencies from requirements.txt instead of editable install
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY app ./app
 COPY alembic.ini ./
 COPY alembic ./alembic
 COPY scripts ./scripts
+# Copy README.md if it exists
+COPY README.md* ./
 
 # Create non-root user
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
