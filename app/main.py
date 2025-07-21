@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 import uvicorn
 
 from app.core.config import get_settings
-from app.api.v1 import auth
+from app.api.v1 import auth, applications, offers, personal_data, referrals
 
 settings = get_settings()
 
@@ -30,7 +30,7 @@ app = FastAPI(
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # В production заменить на конкретные домены
+    allow_origins=settings.CORS_ORIGINS if settings.ENVIRONMENT == "prod" else ["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -56,6 +56,10 @@ def health_check():
 
 # Include routers
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
+app.include_router(applications.router, prefix="/api/v1/applications", tags=["Applications"])
+app.include_router(offers.router, prefix="/api/v1/offers", tags=["Bank Offers"])
+app.include_router(personal_data.router, prefix="/api/v1/personal-data", tags=["Personal Data"])
+app.include_router(referrals.router, prefix="/api/v1/referrals", tags=["Referrals"])
 
 
 if __name__ == "__main__":
