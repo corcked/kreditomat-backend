@@ -1,0 +1,11 @@
+# Production dependencies
+fastapi[all]==0.104.1
+sqlalchemy==2.0.23
+alembic==1.12.1
+psycopg2-binary==2.9.7
+redis==5.0.1
+pyjwt==2.8.0
+python-multipart==0.0.6
+httpx==0.25.2
+pydantic-settings>=2.0.0
+python-dotenv>=1.0.0
