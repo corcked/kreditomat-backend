@@ -5,7 +5,7 @@ from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 
 from app.models.personal_data import (
-    Gender, MaritalStatus, Education, EmploymentType, 
+    Gender, MaritalStatus, EducationLevel, EmploymentType, 
     IncomeSource, LivingArrangement
 )
 from app.services.pdn import PDNRiskLevel
@@ -103,23 +103,19 @@ def calculate_marital_status_score(status: MaritalStatus) -> Dict[str, Any]:
     return scores.get(status, {"score": 60, "reason": "Неизвестный статус"})
 
 
-def calculate_education_score(education: Education) -> Dict[str, Any]:
+def calculate_education_score(education: EducationLevel) -> Dict[str, Any]:
     """
     Calculate score based on education level
     
     Education scoring:
     - Higher: 90 points
-    - Incomplete Higher: 70 points
-    - Secondary Special: 60 points
-    - Secondary: 50 points
-    - Other: 40 points
+    - Secondary: 60 points
+    - Basic: 40 points
     """
     scores = {
-        Education.HIGHER: {"score": 90, "reason": "Высшее образование"},
-        Education.INCOMPLETE_HIGHER: {"score": 70, "reason": "Неоконченное высшее"},
-        Education.SECONDARY_SPECIAL: {"score": 60, "reason": "Среднее специальное"},
-        Education.SECONDARY: {"score": 50, "reason": "Среднее образование"},
-        Education.OTHER: {"score": 40, "reason": "Другое образование"}
+        EducationLevel.HIGHER: {"score": 90, "reason": "Высшее образование"},
+        EducationLevel.SECONDARY: {"score": 60, "reason": "Среднее образование"},
+        EducationLevel.BASIC: {"score": 40, "reason": "Базовое образование"}
     }
     return scores.get(education, {"score": 50, "reason": "Неизвестное образование"})
 
@@ -145,11 +141,11 @@ def calculate_employment_score(
     - >3 years: +20 points
     """
     type_scores = {
-        EmploymentType.FULL_TIME: 100,
-        EmploymentType.CONTRACT: 70,
-        EmploymentType.PART_TIME: 60,
+        EmploymentType.EMPLOYED: 100,
         EmploymentType.SELF_EMPLOYED: 65,
-        EmploymentType.UNEMPLOYED: 20
+        EmploymentType.UNEMPLOYED: 20,
+        EmploymentType.RETIRED: 50,
+        EmploymentType.STUDENT: 30
     }
     
     base_score = type_scores.get(employment_type, 50)

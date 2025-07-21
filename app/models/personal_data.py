@@ -35,6 +35,30 @@ class EducationLevel(str, enum.Enum):
     HIGHER = "higher"
 
 
+class EmploymentType(str, enum.Enum):
+    EMPLOYED = "employed"
+    SELF_EMPLOYED = "self_employed"
+    UNEMPLOYED = "unemployed"
+    RETIRED = "retired"
+    STUDENT = "student"
+
+
+class IncomeSource(str, enum.Enum):
+    SALARY = "salary"
+    BUSINESS = "business"
+    PENSION = "pension"
+    RENTAL = "rental"
+    OTHER = "other"
+
+
+class LivingArrangement(str, enum.Enum):
+    ALONE = "alone"
+    WITH_SPOUSE = "with_spouse"
+    WITH_PARENTS = "with_parents"
+    WITH_CHILDREN = "with_children"
+    WITH_ROOMMATES = "with_roommates"
+
+
 class PersonalData(Base):
     __tablename__ = "personal_data"
     
