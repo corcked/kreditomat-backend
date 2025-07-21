@@ -44,5 +44,5 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
 # Set environment variable for port
 ENV PORT=8000
 
-# Run database migrations and start the application
-CMD ["sh", "-c", "alembic upgrade head && exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Start the application
+CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
