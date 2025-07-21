@@ -4,8 +4,8 @@ from decimal import Decimal
 from pydantic import BaseModel, Field, field_validator
 
 from app.models.personal_data import (
-    Gender, MaritalStatus, Education, EmploymentType,
-    IncomeSource, LivingArrangement
+    Gender, MaritalStatus, EducationLevel, EmploymentType,
+    IncomeSource, LivingArrangement, HousingStatus
 )
 
 
@@ -33,7 +33,7 @@ class PersonalDataBase(BaseModel):
     address: str = Field(..., min_length=1, max_length=500)
     
     # Employment
-    education: Education
+    education: EducationLevel
     employment_type: EmploymentType
     workplace: Optional[str] = Field(None, max_length=255)
     position: Optional[str] = Field(None, max_length=255)
