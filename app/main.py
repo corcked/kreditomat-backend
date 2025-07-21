@@ -11,6 +11,7 @@ from app.core.config import get_settings
 from app.db.session import get_db
 from app.core.redis import get_redis_client
 from app.api.v1 import auth, applications, offers, personal_data, referrals
+from app.api.v1.endpoints import health
 
 settings = get_settings()
 
@@ -143,6 +144,7 @@ async def detailed_health_check(db: Session = Depends(get_db)):
 
 
 # Include routers
+app.include_router(health.router, prefix="/api/v1", tags=["Health"])
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
 app.include_router(applications.router, prefix="/api/v1/applications", tags=["Applications"])
 app.include_router(offers.router, prefix="/api/v1/offers", tags=["Bank Offers"])
