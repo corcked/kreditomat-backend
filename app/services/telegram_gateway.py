@@ -48,7 +48,7 @@ class TelegramGatewayService:
         RedisService.store_otp(phone, code)
         
         # In development mode, just return success without sending
-        if settings.ENVIRONMENT == "dev" and not settings.TELEGRAM_GATEWAY_TOKEN:
+        if settings.ENVIRONMENT in ["dev", "staging"] and not settings.TELEGRAM_GATEWAY_TOKEN:
             return {
                 "success": True,
                 "message": f"Development mode: OTP code is {code}",
@@ -118,7 +118,7 @@ class TelegramGatewayService:
             Response dictionary with availability status
         """
         # In development mode, assume all phones are available
-        if settings.ENVIRONMENT == "dev" and not settings.TELEGRAM_GATEWAY_TOKEN:
+        if settings.ENVIRONMENT in ["dev", "staging"] and not settings.TELEGRAM_GATEWAY_TOKEN:
             return {
                 "available": True,
                 "has_telegram": True

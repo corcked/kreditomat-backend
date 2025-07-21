@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     # Application
     PROJECT_NAME: str = "Kreditomat API"
     VERSION: str = "0.1.0"
-    ENVIRONMENT: str = Field(default="dev", pattern="^(dev|staging|prod)$")
+    ENVIRONMENT: str = Field(default="dev", pattern="^(dev|staging|prod|production)$")
     DEBUG: bool = Field(default=True)
     
     # Database
