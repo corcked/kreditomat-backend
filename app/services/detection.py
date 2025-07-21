@@ -6,10 +6,10 @@ from user_agents import parse
 from fastapi import Request
 
 from app.core.config import get_settings
-from app.core.redis import get_redis
+from app.core.redis import get_redis_client
 
 settings = get_settings()
-redis_client = get_redis()
+redis_client = get_redis_client()
 
 
 class DeviceDetector:
