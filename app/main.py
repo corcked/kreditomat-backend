@@ -1,9 +1,15 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+from sqlalchemy import text
+from sqlalchemy.orm import Session
 import uvicorn
+import redis
+import time
 
 from app.core.config import get_settings
+from app.db.session import get_db
+from app.core.redis import get_redis_client
 from app.api.v1 import auth, applications, offers, personal_data, referrals
 
 settings = get_settings()
@@ -47,11 +53,93 @@ def read_root():
 
 
 @app.get("/health")
-def health_check():
-    return {
+async def health_check(db: Session = Depends(get_db)):
+    """Basic health check endpoint"""
+    health_status = {
         "status": "healthy",
-        "environment": settings.ENVIRONMENT
+        "timestamp": time.time(),
+        "environment": settings.ENVIRONMENT,
+        "version": "0.1.0"
     }
+    
+    # Check database
+    try:
+        db.execute(text("SELECT 1"))
+        health_status["database"] = "healthy"
+    except Exception as e:
+        health_status["status"] = "degraded"
+        health_status["database"] = f"unhealthy: {str(e)}"
+    
+    # Check Redis
+    try:
+        redis_client = get_redis_client()
+        redis_client.ping()
+        health_status["redis"] = "healthy"
+    except Exception as e:
+        health_status["status"] = "degraded"
+        health_status["redis"] = f"unhealthy: {str(e)}"
+    
+    return health_status
+
+
+@app.get("/api/v1/health")
+async def detailed_health_check(db: Session = Depends(get_db)):
+    """Detailed health check with dependency status"""
+    start_time = time.time()
+    
+    health = {
+        "status": "healthy",
+        "timestamp": start_time,
+        "environment": settings.ENVIRONMENT,
+        "version": "0.1.0",
+        "checks": {}
+    }
+    
+    # Database check
+    try:
+        result = db.execute(text("SELECT COUNT(*) FROM users"))
+        user_count = result.scalar()
+        health["checks"]["database"] = {
+            "status": "healthy",
+            "response_time": time.time() - start_time,
+            "user_count": user_count
+        }
+    except Exception as e:
+        health["status"] = "unhealthy"
+        health["checks"]["database"] = {
+            "status": "unhealthy",
+            "error": str(e)
+        }
+    
+    # Redis check
+    redis_start = time.time()
+    try:
+        redis_client = get_redis_client()
+        redis_client.ping()
+        info = redis_client.info()
+        health["checks"]["redis"] = {
+            "status": "healthy",
+            "response_time": time.time() - redis_start,
+            "connected_clients": info.get("connected_clients", 0),
+            "used_memory": info.get("used_memory_human", "unknown")
+        }
+    except Exception as e:
+        health["status"] = "unhealthy"
+        health["checks"]["redis"] = {
+            "status": "unhealthy",
+            "error": str(e)
+        }
+    
+    # External services check (if needed)
+    if settings.TELEGRAM_BOT_TOKEN:
+        health["checks"]["telegram"] = {
+            "status": "configured",
+            "test_mode": settings.USE_TELEGRAM_TEST_DC
+        }
+    
+    health["total_response_time"] = time.time() - start_time
+    
+    return health
 
 
 # Include routers
