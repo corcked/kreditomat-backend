@@ -5,12 +5,19 @@ WORKDIR /app
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     gcc \
+    g++ \
     postgresql-client \
+    libpq-dev \
+    python3-dev \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy dependency files first
 COPY pyproject.toml ./
 COPY requirements.txt ./
+
+# Update pip and setuptools
+RUN pip install --upgrade pip setuptools wheel
 
 # Install Python dependencies from requirements.txt instead of editable install
 RUN pip install --no-cache-dir -r requirements.txt
